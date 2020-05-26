@@ -17,9 +17,18 @@ class City_Weather(commands.Cog) :
     
     @commands.command(aliases = ['city'])
     async def temp(self, ctx, city) :
-        data.get_yahoo_weather_by_city(f"{city.lower()}", Unit.celsius)
         print(f"{str(ctx.message.author)} asked for the weather in {city}")
-        reply = f"Weather in {city}: \n Temp: {data.condition.temperature} degrees C \n Condition: {data.condition.text}" 
+
+        data.get_yahoo_weather_by_city(f"{city.lower()}", Unit.celsius)
+        lat = data.location.lat
+        lon = data.location.long
+        avg_temp = data.condition.temperature
+        temp_text = data.condition.text
+        humidity = data.atmosphere.humidity
+        wind_speed = data.wind.speed
+
+        reply = f"Weather in {city} (lat: {lat}, long: {lon}): \n Average Day Temperature: {avg_temp} degrees C \n Condition: {temp_text} \n Humidity: {humidity}% \n Wind: {wind_speed} km/h" 
+        
         await ctx.send(reply)
 
 def setup(client) :
