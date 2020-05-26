@@ -1,11 +1,11 @@
 import discord
 from discord.ext import commands
 import os
-import pyowm
+from yahoo_weather.weather import YahooWeather
+from yahoo_weather.config.units import Unit
+from keys import CLIENT # APP_ID, API_KEY, API_SECRET
 
-owm = pyowm.OWM('c215dad8b6c6f9603d49028b5fbcda3e')
-obv = owm.weather_at_place('los angeles, ca')
-print(obv)
+# data = YahooWeather(APP_ID=APP_ID, api_key=API_KEY, api_secret=API_SECRET)
 
 client = commands.Bot(command_prefix='.')
 
@@ -13,11 +13,13 @@ client = commands.Bot(command_prefix='.')
 async def on_ready() :
     print("WeatherBot is Ready")
 
-@client.command()
-async def test(ctx, city, state) :
-    print(f"{str(ctx.message.author)} asked for the weather of {city}, {state}")
-    # url = f"api.openweathermap.org/data/2.5/weather?q={city},{state}&appid=c215dad8b6c6f9603d49028b5fbcda3e"
-    # response = requests.request("GET", url)
-    # await ctx.send(response.text)
+@commands.command()
+async def ping(ctx) :
+    await ctx.send(f"Ping: {round(1000 * client.latency)}ms")
+    print(f"{str(ctx.message.author)} asked for the Ping")
 
-client.run('NzE0MjI1MzIwMDg1MTYwMDM5.XsrkxQ.t7hbt963JiFYWwcWeEt29GDHle8')
+for filename in os.listdir('./cogs') :
+    if filename.endswith('.py') and filename != 'keys.py':
+        client.load_extension(f'cogs.{filename[:-3]}')
+
+client.run(CLIENT)
